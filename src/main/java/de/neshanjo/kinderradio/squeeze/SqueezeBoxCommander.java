@@ -53,7 +53,7 @@ public class SqueezeBoxCommander {
     
     public void connect() throws IOException {
         try {
-            LOG.log(Level.FINE, "Connecting to {0}:{1}", new Object[]{server, port});
+            LOG.log(Level.FINE, "Connecting to {0}:{1}", new Object[]{server, "" + port});
             socket = new Socket(server, port);
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -117,9 +117,11 @@ public class SqueezeBoxCommander {
                 sb.append(" ").append(arg);
             }
         }
-        out.println(sb.toString());
-        String response = in.readLine();
-        LOG.log(Level.FINER, "Server response: {0}", response);
+        final String concatCommand = sb.toString();
+        out.println(concatCommand);
+        final String response = in.readLine();
+        final String logMessage = response != null && !response.isEmpty() ? "[OK]" : "[NOT OK]"; 
+        LOG.log(Level.FINER, "{0} {1}", new Object[] { concatCommand, logMessage});
     }
     
     private void closeSocketAndStreams() throws IOException {
